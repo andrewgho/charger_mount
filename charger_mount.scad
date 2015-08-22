@@ -1,29 +1,30 @@
 // charger_mount.scad - bottom wall mount bracket for Nitecore Intellicharger i4
 // Andrew Ho (andrew@zeuscat.com)
 
+// Outer dimensions of charger shell (all dimensions in mm)
+shell_width = 96;
+shell_depth = 36;
+
+// Bottom center dimple top/bottom width and cut-out height
+dimple_top_width = 23;
+dimple_bottom_width = 25;
+dimple_width_diff = (dimple_bottom_width - dimple_top_width) / 2;
+dimple_height = 2.5;
+
+// Front outer corner vertical bevels are 45° cut-outs with 6mm faces
+front_bevel_width = 6 / sqrt(2);
+
+// Rear bottom horizontal bevel extends 7.5mm deep, 4.5mm inwards
+rear_bevel_depth = 7.5;
+rear_bevel_height = 4.5;
+rear_bevel_angle = atan(rear_bevel_height / rear_bevel_depth);
+
 // e = epsilon fudge factor to add to cut-outs for smoother rendering
 e = 0.1;
 e2 = e * 2;
 
 // Model bottom portion of charger
 module charger_bottom(shell_height) {
-  // Outer dimensions of charger shell (all dimensions in mm)
-  shell_width = 96;
-  shell_depth = 36;
-
-  // Bottom center dimple top/bottom width and cut-out height
-  dimple_top_width = 23;
-  dimple_bottom_width = 25;
-  dimple_width_diff = (dimple_bottom_width - dimple_top_width) / 2;
-  dimple_height = 2.5;
-
-  // Front outer corner vertical bevels are 45° cut-outs with 6mm faces
-  front_bevel_width = 6 / sqrt(2);
-
-  // Rear bottom horizontal bevel extends 7.5mm deep, 4.5mm inwards
-  rear_bevel_depth = 7.5;
-  rear_bevel_height = 4.5;
-  rear_bevel_angle = atan(rear_bevel_height / rear_bevel_depth);
 
   // Given angle theta, adjacent length, and height, render right triangle
   module right_triangle(theta, x, z) {
@@ -70,15 +71,94 @@ module charger_bottom(shell_height) {
 }
 
 // Bottom wall mount bracket
-mount_height = 6;
-mount_thickness = 1;
-mount_thickness2 = mount_thickness * 2;
+module charger_bottom_bracket() {
+  mount_height = 6;
+  thickness = 1;
 
-difference() {
-  translate([-mount_thickness / 2, -mount_thickness / 2, -mount_thickness / 2])
-    minkowski() {
-      charger_bottom(mount_height);
-      cube(size = [mount_thickness, mount_thickness, mount_thickness]);
+  // Rectangular cutouts for cooling vents
+  vent_width = 22;
+  vent_depth = 16;
+  vent_corner_radius = 1.8;
+  vent_side_offset =
+    ((shell_width - dimple_bottom_width) / 4) - (vent_width / 2);
+  vent_front_offset = (shell_depth - vent_width) / 2;
+
+  // Screw tab
+  screw_hole_diameter = 4.78;
+  screw_tab_margin = 4;
+  screw_tab_width = screw_hole_diameter + screw_tab_margin;
+  screw_tab_hang = rear_bevel_height + 1;
+
+  // Rectangle with rounded corners
+  module rounded_cube(x, y, z, r) {
+    translate([r, r, 0])
+      minkowski() {
+        cube([x - (r * 2), y - (r * 2), z]);
+        cylinder(r = r, h = z, $fn = 360);
+      }
+  }
+
+  // Rounded tab with hole for screw
+  module screw_tab() {
+    translate([-screw_tab_width, 0, -screw_tab_width / 2])
+    rotate([90, 0, 0])
+    difference() {
+      union() {
+        // Central screw tab face
+        translate([screw_tab_width, -screw_tab_hang, 0])
+          cylinder(d = screw_tab_width, h = thickness, $fn = 360);
+        // Screw tab side wing (T-shape top)
+        cube([screw_tab_width * 2, screw_tab_width / 2, thickness]);
+        // Screw tab hang (T-shape shaft)
+        translate([screw_tab_width / 2, -screw_tab_hang, 0])
+          cube([screw_tab_width, screw_tab_hang + screw_tab_width / 2,
+                thickness]);
+      }
+      union() {
+        // Screw tab left side wing cutout
+        translate([0, 0, -e])
+          cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
+        // Screw hole cutout
+        translate([screw_tab_width, -screw_tab_hang, -e])
+          cylinder(d = screw_hole_diameter, h = thickness + e2, $fn = 360);
+        // Screw tab right side wing cutout
+        translate([screw_tab_width * 2, 0, -e])
+          cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
+      }
     }
-  charger_bottom(mount_height + (mount_thickness / 2) + e);
+  }
+
+  difference() {
+    union() {
+      translate([-thickness, -thickness, -thickness])
+        minkowski() {
+          charger_bottom(mount_height);
+          cube([thickness * 2, thickness * 2, thickness * 2]);
+        }
+
+      // Screw tabs (from front: left, right)
+      translate([screw_tab_width + rear_bevel_height,
+                 shell_depth + thickness,
+                 rear_bevel_height - thickness])
+        screw_tab();
+      translate([shell_width - (screw_tab_width + rear_bevel_height),
+                 shell_depth + thickness,
+                 rear_bevel_height - thickness])
+        screw_tab();
+    }
+    union() {
+      charger_bottom(mount_height + thickness + e);
+
+      // Rectangular cutouts for cooling vents (from front: left, right)
+      translate([vent_side_offset, vent_front_offset, -(thickness + e)])
+        rounded_cube(vent_width, vent_depth, thickness + e2,
+                     vent_corner_radius);
+      translate([shell_width - vent_side_offset - vent_width,
+                 vent_front_offset, -(thickness + e)])
+        rounded_cube(vent_width, vent_depth, thickness + e2,
+                     vent_corner_radius);
+    }
+  }
 }
+
+charger_bottom_bracket();
