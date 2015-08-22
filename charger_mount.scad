@@ -115,10 +115,10 @@ module charger_bottom_bracket() {
                 thickness]);
         // Support buttress (from front: left, right)
         translate([2 * screw_tab_width / 3, -(screw_tab_hang - rear_bevel_height), 0])
-          cube([thickness, screw_tab_width / 2, screw_tab_width / 2]);
+          cube([thickness, screw_tab_hang, screw_tab_width / 2]);
         translate([(screw_tab_width * 2) - (2 * screw_tab_width / 3) - thickness,
                    -(screw_tab_hang - rear_bevel_height), 0])
-          cube([thickness, screw_tab_width / 2, screw_tab_width / 2]);
+          cube([thickness, screw_tab_hang, screw_tab_width / 2]);
       }
       union() {
         // Screw tab left side wing cutout
