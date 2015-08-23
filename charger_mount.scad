@@ -114,9 +114,10 @@ module charger_bottom_bracket() {
           cube([screw_tab_width, screw_tab_hang + screw_tab_width / 2,
                 thickness]);
         // Support buttress (from front: left, right)
-        translate([2 * screw_tab_width / 3, -(screw_tab_hang - rear_bevel_height), 0])
+        translate([2 * screw_tab_width / 3,
+                   -(screw_tab_hang - rear_bevel_height), 0])
           cube([thickness, screw_tab_hang, screw_tab_width / 2]);
-        translate([(screw_tab_width * 2) - (2 * screw_tab_width / 3) - thickness,
+        translate([(4 * screw_tab_width / 3) - thickness,
                    -(screw_tab_hang - rear_bevel_height), 0])
           cube([thickness, screw_tab_hang, screw_tab_width / 2]);
       }
@@ -136,7 +137,7 @@ module charger_bottom_bracket() {
                    screw_tab_width / 2 + thickness])
           rotate([0, 90, 0])
           cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
-        translate([(screw_tab_width * 2) - (2 * screw_tab_width / 3) - thickness - e,
+        translate([(4 * screw_tab_width / 3) - thickness - e,
                    -(screw_tab_hang - rear_bevel_height),
                    screw_tab_width / 2 + thickness])
           rotate([0, 90, 0])
