@@ -1,4 +1,4 @@
-// charger_mount.scad - bottom bracket for Nitecore Intellicharger i4 wall mount
+// bottom_bracket.scad - bottom bracket for wall mount
 // Andrew Ho (andrew@zeuscat.com)
 
 include <dimensions.scad>
@@ -51,7 +51,7 @@ module charger_bottom(shell_height) {
 }
 
 // Bottom wall mount bracket
-module charger_bottom_bracket() {
+module bottom_bracket() {
   mount_height = 6;
 
   // Rectangular cutouts for cooling vents
@@ -158,4 +158,4 @@ module charger_bottom_bracket() {
   }
 }
 
-charger_bottom_bracket();
+bottom_bracket();
