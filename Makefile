@@ -11,7 +11,7 @@ TARGETS = charger_mount.stl
 
 all: $(TARGETS)
 
-charger_mount.stl: charger_mount.scad
+charger_mount.stl: dimensions.scad charger_mount.scad
 	$(OPENSCAD) -o charger_mount.stl charger_mount.scad
 
 clean:

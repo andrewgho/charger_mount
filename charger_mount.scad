@@ -1,27 +1,7 @@
-// charger_mount.scad - bottom wall mount bracket for Nitecore Intellicharger i4
+// charger_mount.scad - bottom bracket for Nitecore Intellicharger i4 wall mount
 // Andrew Ho (andrew@zeuscat.com)
 
-// Outer dimensions of charger shell (all dimensions in mm)
-shell_width = 96;
-shell_depth = 36;
-
-// Bottom center dimple top/bottom width and cut-out height
-dimple_top_width = 23;
-dimple_bottom_width = 25;
-dimple_width_diff = (dimple_bottom_width - dimple_top_width) / 2;
-dimple_height = 2.5;
-
-// Front outer corner vertical bevels are 45° cut-outs with 6mm faces
-front_bevel_width = 6 / sqrt(2);
-
-// Rear bottom horizontal bevel extends 7.5mm deep, 4.5mm inwards
-rear_bevel_depth = 7.5;
-rear_bevel_height = 4.5;
-rear_bevel_angle = atan(rear_bevel_height / rear_bevel_depth);
-
-// e = epsilon fudge factor to add to cut-outs for smoother rendering
-e = 0.1;
-e2 = e * 2;
+include <dimensions.scad>
 
 // Model bottom portion of charger
 module charger_bottom(shell_height) {
@@ -73,7 +53,6 @@ module charger_bottom(shell_height) {
 // Bottom wall mount bracket
 module charger_bottom_bracket() {
   mount_height = 6;
-  thickness = 1;
 
   // Rectangular cutouts for cooling vents
   vent_width = 22;
