@@ -7,12 +7,12 @@ else
   OPENSCAD = openscad
 endif
 
-TARGETS = charger_mount.stl
+TARGETS = bottom_bracket.stl
 
 all: $(TARGETS)
 
-charger_mount.stl: dimensions.scad charger_mount.scad
-	$(OPENSCAD) -o charger_mount.stl charger_mount.scad
+bottom_bracket.stl: dimensions.scad bottom_bracket.scad
+	$(OPENSCAD) -o bottom_bracket.stl bottom_bracket.scad
 
 clean:
 	@rm -f $(TARGETS)
