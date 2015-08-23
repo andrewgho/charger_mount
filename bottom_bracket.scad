@@ -3,9 +3,10 @@
 
 include <dimensions.scad>
 include <charger.scad>
+include <screw_mount.scad>
 
-// Overall height of bottom bracket, minus screw tabs
-mount_height = 6;
+// Overall height of bottom bracket
+mount_height = rear_bevel_height + screw_head_diameter;
 
 // Rectangular cutouts for cooling vents
 vent_width = 22;
@@ -13,12 +14,6 @@ vent_depth = 16;
 vent_corner_radius = 1.8;
 vent_side_offset = ((shell_width - dimple_bottom_width) / 4) - (vent_width / 2);
 vent_front_offset = (shell_depth - vent_width) / 2;
-
-// Screw tab
-screw_hole_diameter = 4.78;
-screw_tab_margin = 4;
-screw_tab_width = screw_hole_diameter + screw_tab_margin;
-screw_tab_hang = rear_bevel_height + 1;
 
 // Rectangle with rounded corners
 module rounded_cube(x, y, z, r) {
@@ -29,54 +24,6 @@ module rounded_cube(x, y, z, r) {
     }
 }
 
-// Rounded tab with hole for screw
-module screw_tab() {
-  translate([-screw_tab_width, 0, -screw_tab_width / 2])
-  rotate([90, 0, 0])
-  difference() {
-    union() {
-      // Central screw tab face
-      translate([screw_tab_width, -screw_tab_hang, 0])
-        cylinder(d = screw_tab_width, h = thickness, $fn = 360);
-      // Screw tab side wing (T-shape top)
-      cube([screw_tab_width * 2, screw_tab_width / 2, thickness]);
-      // Screw tab hang (T-shape shaft)
-      translate([screw_tab_width / 2, -screw_tab_hang, 0])
-        cube([screw_tab_width, screw_tab_hang + screw_tab_width / 2,
-              thickness]);
-      // Support buttress (from front: left, right)
-      translate([2 * screw_tab_width / 3,
-                 -(screw_tab_hang - rear_bevel_height), 0])
-        cube([thickness, screw_tab_hang, screw_tab_width / 2]);
-      translate([(4 * screw_tab_width / 3) - thickness,
-                 -(screw_tab_hang - rear_bevel_height), 0])
-        cube([thickness, screw_tab_hang, screw_tab_width / 2]);
-    }
-    union() {
-      // Screw tab left side wing cutout
-      translate([0, 0, -e])
-        cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
-      // Screw hole cutout
-      translate([screw_tab_width, -screw_tab_hang, -e])
-        cylinder(d = screw_hole_diameter, h = thickness + e2, $fn = 360);
-      // Screw tab right side wing cutout
-      translate([screw_tab_width * 2, 0, -e])
-        cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
-      // Buttress cutouts (from front: left, right)
-      translate([(2 * screw_tab_width / 3) - e,
-                 -(screw_tab_hang - rear_bevel_height),
-                 screw_tab_width / 2 + thickness])
-        rotate([0, 90, 0])
-        cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
-      translate([(4 * screw_tab_width / 3) - thickness - e,
-                 -(screw_tab_hang - rear_bevel_height),
-                 screw_tab_width / 2 + thickness])
-        rotate([0, 90, 0])
-        cylinder(d = screw_tab_width, h = thickness + e2, $fn = 360);
-    }
-  }
-}
-
 difference() {
   union() {
     translate([-thickness, -thickness, -thickness])
@@ -85,15 +32,25 @@ difference() {
         cube([thickness * 2, thickness * 2, thickness * 2]);
       }
 
-    // Screw tabs (from front: left, right)
-    translate([screw_tab_width + rear_bevel_height,
-               shell_depth + thickness,
-               rear_bevel_height - thickness])
-      screw_tab();
-    translate([shell_width - (screw_tab_width + rear_bevel_height),
-               shell_depth + thickness,
-               rear_bevel_height - thickness])
-      screw_tab();
+    // Screw mounts
+    translate([shell_width / 4, shell_depth + thickness,
+               rear_bevel_height + (screw_head_diameter / 2)])
+      screw_mount();
+    translate([3 * shell_width / 4, shell_depth + thickness,
+               rear_bevel_height + (screw_head_diameter / 2)])
+      screw_mount();
+
+    // Box frame
+    translate([rear_bevel_height - thickness, shell_depth + thickness, rear_bevel_height - thickness]) {
+      cube([shell_width - (2 * rear_bevel_height) + (2 * thickness),
+            screw_head_height + thickness, thickness]);
+      cube([thickness, screw_head_height + thickness, mount_height - rear_bevel_height + (2 * thickness)]);
+    }
+    translate([rear_bevel_height - thickness, shell_depth + thickness, mount_height])
+      cube([shell_width - (2 * rear_bevel_height) + (2 * thickness),
+            screw_head_height + thickness, thickness]);
+    translate([shell_width - rear_bevel_height, shell_depth + thickness, rear_bevel_height - thickness])
+      cube([thickness, screw_head_height + thickness, mount_height - rear_bevel_height + (2 * thickness)]);
   }
   union() {
     charger_bottom(mount_height + thickness + e);
@@ -106,5 +63,36 @@ difference() {
                vent_front_offset, -(thickness + e)])
       rounded_cube(vent_width, vent_depth, thickness + e2,
                    vent_corner_radius);
+
+    // Cut out screw holes
+    translate([shell_width / 4, shell_depth + thickness + e,
+               rear_bevel_height + (screw_head_diameter / 2)])
+      rotate([90, 0, 0])
+      cylinder(d = screw_head_diameter, h = thickness + e2, $fn = 360);
+    translate([3 * shell_width / 4, shell_depth + thickness + e,
+               rear_bevel_height + (screw_head_diameter / 2)])
+      rotate([90, 0, 0])
+      cylinder(d = screw_head_diameter, h = thickness + e2, $fn = 360);
   }
+}
+
+
+front_height_cutoff = mount_height / 2;
+
+*union() {
+  hull() {
+    translate([-thickness, 0, front_height_cutoff]) {
+      translate([0, 0, front_height_cutoff / 2])
+        rotate([0, 90, 0])
+        cylinder(d = front_height_cutoff,
+                 h = shell_width + (2 * thickness),
+                 $fn = 360);
+      mirror([0, 1, 0])
+        cube([shell_width + (2 * thickness), shell_depth + e, front_height_cutoff]);
+    }
+  }
+  #translate([-thickness, 0, front_height_cutoff])
+    mirror([0, 1, 0])
+    translate([0, -(shell_depth + e), front_height_cutoff / 2])
+    cube([shell_width + (2 * thickness), (2 * shell_depth) + e2, 20]);
 }

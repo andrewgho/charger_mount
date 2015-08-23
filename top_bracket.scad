@@ -3,8 +3,9 @@
 
 include <dimensions.scad>
 include <charger.scad>
+include <screw_mount.scad>
 
-mount_height = 10;
+mount_height = screw_head_diameter + (thickness * 2);
 
 union() {
   difference() {
@@ -34,6 +35,14 @@ union() {
       translate([top_front_bevel_width, -(thickness + e), -e])
         cube([shell_width - (top_front_bevel_width * 2),
               thickness + e2, mount_height + e2]);
+
+      // Cut out screw holes
+      translate([shell_width / 4, shell_depth + thickness + e, mount_height / 2])
+        rotate([90, 0, 0])
+        cylinder(d = screw_head_diameter, h = thickness + e2, $fn = 360);
+      translate([3 * shell_width / 4, shell_depth + thickness + e, mount_height / 2])
+        rotate([90, 0, 0])
+        cylinder(d = screw_head_diameter, h = thickness + e2, $fn = 360);
     }
   }
 
@@ -58,4 +67,23 @@ union() {
                  -thickness * sqrt(2) / 2, 0])
         cylinder(d = thickness * sqrt(2), h = mount_height, $fn = 360);
     }
+
+  // Screw holes
+  translate([shell_width / 4, shell_depth + thickness, mount_height / 2])
+    screw_mount();
+  translate([3 * shell_width / 4, shell_depth + thickness, mount_height / 2])
+    screw_mount();
+
+  // Box frame
+  translate([rear_bevel_height - thickness, shell_depth + thickness, 0]) {
+    cube([shell_width - (2 * rear_bevel_height) + (2 * thickness),
+          screw_head_height + thickness, thickness]);
+    cube([thickness, screw_head_height + thickness, mount_height]);
+  }
+  translate([rear_bevel_height - thickness, shell_depth + thickness, mount_height - thickness])
+    cube([shell_width - (2 * rear_bevel_height) + (2 * thickness),
+          screw_head_height + thickness, thickness]);
+  translate([shell_width - (rear_bevel_height),
+             shell_depth + thickness, 0])
+    cube([thickness, screw_head_height + thickness, mount_height]);
 }
