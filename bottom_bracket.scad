@@ -4,6 +4,7 @@
 include <dimensions.scad>
 include <charger.scad>
 include <screw_mount.scad>
+include <scutout.scad>
 
 // Overall height of bottom bracket
 mount_height = rear_bevel_height + screw_head_diameter;
@@ -23,6 +24,8 @@ module rounded_cube(x, y, z, r) {
       cylinder(r = r, h = z, $fn = 360);
     }
 }
+
+difference() {
 
 difference() {
   union() {
@@ -76,23 +79,13 @@ difference() {
   }
 }
 
+// S-curve cutout to better expose lower front
+translate([-(thickness + e),
+            shell_depth - e, 7 - (thickness + e)])
+  mirror([0, 1, 0])
+  cutout(shell_width + (2 * thickness) + e2,
+         shell_depth + thickness + e,
+         mount_height + thickness + e,
+         4.5, 0, 6);
 
-front_height_cutoff = mount_height / 2;
-
-*union() {
-  hull() {
-    translate([-thickness, 0, front_height_cutoff]) {
-      translate([0, 0, front_height_cutoff / 2])
-        rotate([0, 90, 0])
-        cylinder(d = front_height_cutoff,
-                 h = shell_width + (2 * thickness),
-                 $fn = 360);
-      mirror([0, 1, 0])
-        cube([shell_width + (2 * thickness), shell_depth + e, front_height_cutoff]);
-    }
-  }
-  #translate([-thickness, 0, front_height_cutoff])
-    mirror([0, 1, 0])
-    translate([0, -(shell_depth + e), front_height_cutoff / 2])
-    cube([shell_width + (2 * thickness), (2 * shell_depth) + e2, 20]);
 }
