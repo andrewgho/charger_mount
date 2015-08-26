@@ -4,7 +4,7 @@
 include <dimensions.scad>
 include <charger.scad>
 include <screw_mount.scad>
-include <scutout.scad>
+include <biarc_cutout.scad>
 
 // Overall height of bottom bracket
 mount_height = rear_bevel_height + screw_head_diameter;
@@ -83,9 +83,9 @@ difference() {
 translate([-(thickness + e),
             shell_depth - e, 7 - (thickness + e)])
   mirror([0, 1, 0])
-  cutout(shell_width + (2 * thickness) + e2,
-         shell_depth + thickness + e,
-         mount_height + thickness + e,
-         4.5, 0, 6);
+  biarc_cutout([shell_width + (2 * thickness) + e2,
+                shell_depth + thickness + e,
+                mount_height + thickness + e],
+               4.5, 0, 6);
 
 }

@@ -11,7 +11,7 @@ TARGETS = bottom_bracket.stl top_bracket.stl
 
 all: $(TARGETS)
 
-bottom_bracket.stl: dimensions.scad charger.scad scutout.scad bottom_bracket.scad
+bottom_bracket.stl: dimensions.scad charger.scad biarc_cutout.scad bottom_bracket.scad
 	$(OPENSCAD) -o bottom_bracket.stl bottom_bracket.scad
 
 top_bracket.stl: dimensions.scad charger.scad top_bracket.scad
