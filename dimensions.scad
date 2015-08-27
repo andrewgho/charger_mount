@@ -25,6 +25,11 @@ rear_bevel_depth = 7.5;
 rear_bevel_height = 4.5;
 rear_bevel_angle = atan(rear_bevel_height / rear_bevel_depth);
 
+// #8 × 1½″ pan head machine screw for TOGGLER SnapSkru self-drilling anchor
+screw_head_diameter = 9;
+screw_head_height = 4;
+screw_hole_diameter = 4.78;
+
 // e = epsilon fudge factor to add to cut-outs for smoother rendering
 e = 0.1;
 e2 = e * 2;
