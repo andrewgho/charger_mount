@@ -5,7 +5,7 @@ include <dimensions.scad>
 include <charger.scad>
 include <screw_box.scad>
 
-mount_height = screw_head_diameter + (thickness * 2);
+mount_height = screw_head_diameter + thickness2;
 
 module top_bracket_arms() {
   union() {
@@ -14,17 +14,17 @@ module top_bracket_arms() {
         translate([-thickness, -thickness, -thickness])
           minkowski() {
             charger_top(mount_height);
-            cube([thickness * 2, thickness * 2, thickness * 2]);
+            cube([thickness2, thickness2, thickness2]);
           }
         union() {
           // Chop off unnecessary vertical shell expansion (top, bottom)
           translate([-(thickness + e), -(thickness + e), mount_height])
-            cube([shell_width + (thickness * 2) + e2,
-                  shell_depth + (thickness * 2) + e2,
+            cube([shell_width + thickness2 + e2,
+                  shell_depth + thickness2 + e2,
                   thickness + e]);
           translate([-(thickness + e), -(thickness + e), -(thickness + e)])
-            cube([shell_width + (thickness * 2) + e2,
-                  shell_depth + (thickness * 2) + e2,
+            cube([shell_width + thickness2 + e2,
+                  shell_depth + thickness2 + e2,
                   thickness + e]);
         }
       }
@@ -34,7 +34,7 @@ module top_bracket_arms() {
 
         // Cut out front portion
         translate([top_front_bevel_width, -(thickness + e), -e])
-          cube([shell_width - (top_front_bevel_width * 2),
+          cube([shell_width - (2 * top_front_bevel_width),
                 thickness + e2, mount_height + e2]);
       }
     }

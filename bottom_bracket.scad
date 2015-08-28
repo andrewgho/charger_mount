@@ -8,7 +8,7 @@ include <biarc_cutout.scad>
 
 // Overall height of bottom bracket
 mount_height = rear_bevel_height + screw_head_diameter;
-mount_height_front = bottom_front_bevel_width + (thickness * 2);
+mount_height_front = bottom_front_bevel_width + thickness2;
 
 // Rectangular cutouts for cooling vents
 vent_width = 22;
@@ -21,7 +21,8 @@ vent_front_offset = (shell_depth - vent_width) / 2;
 module rounded_cube(x, y, z, r) {
   translate([r, r, 0])
     minkowski() {
-      cube([x - (r * 2), y - (r * 2), z]);
+      d = 2 * r;
+      cube([x - d, y - d, z]);
       cylinder(r = r, h = z, $fn = 360);
     }
 }
@@ -32,7 +33,7 @@ module bottom_bracket_shelf() {
       translate([-thickness, -thickness, -thickness])
         minkowski() {
           charger_bottom(mount_height);
-          cube([thickness * 2, thickness * 2, thickness * 2]);
+          cube([thickness2, thickness2, thickness2]);
         }
     }
     union() {

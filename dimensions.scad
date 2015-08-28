@@ -3,6 +3,7 @@
 
 // Hull thickness of completed components
 thickness = 1;
+thickness2 = 2 * thickness;
 
 // Outer dimensions of charger shell (all dimensions in mm)
 shell_width = 96;
@@ -32,4 +33,4 @@ screw_hole_diameter = 4.78;
 
 // e = epsilon fudge factor to add to cut-outs for smoother rendering
 e = 0.1;
-e2 = e * 2;
+e2 = 2 * e;
