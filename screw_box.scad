@@ -18,7 +18,8 @@ module screw_box(location,              // Translation vector (x, y, z)
                  thickness = 1,         // Hull thickness
                  hole_diameter = 4.78,  // Through hole diameter
                  head_diameter = 9,     // Hole with clearance for screw head
-                 hole_pattern = [1/2])  // Vector of left/right hole locations
+                 hole_pattern = [1/2],  // Vector of left/right hole locations
+                 brace_pattern = [])    // Vector of vertical brace locations
 {
   // Break out size vector components
   width = size[0];
@@ -51,7 +52,7 @@ module screw_box(location,              // Translation vector (x, y, z)
           cube([width, depth, thickness]);
 
         // Vertical cross-braces
-        for(fraction = hole_pattern) {
+        for(fraction = concat(hole_pattern, brace_pattern)) {
           translate([(width - thickness) * fraction, 0, 0])
             cube([thickness, depth, height]);
         }
