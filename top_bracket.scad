@@ -72,7 +72,8 @@ module top_bracket() {
              mount_height],
             hole_diameter = screw_hole_diameter,
             head_diameter = screw_head_diameter,
-            hole_pattern = [1/6, 5/6])
+            hole_pattern = [1/6, 5/6],
+            brace_pattern = [1/3, 2/3])
     top_bracket_arms();
 }
 
