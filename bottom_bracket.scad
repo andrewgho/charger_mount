@@ -35,6 +35,10 @@ module bottom_bracket_shelf() {
           charger_bottom(mount_height);
           cube([thickness2, thickness2, thickness2]);
         }
+
+      // Bottom length-wise cross-brace for strength
+      translate([0, (shell_depth - rear_bevel_depth) / 2, -thickness])
+        cube([shell_width, thickness, dimple_height]);
     }
     union() {
       charger_bottom(mount_height + thickness + e);
@@ -61,7 +65,8 @@ module bottom_bracket() {
                mount_height - rear_bevel_height + (2 * thickness)],
               hole_diameter = screw_hole_diameter,
               head_diameter = screw_head_diameter,
-              hole_pattern = [1/6, 5/6])
+              hole_pattern = [1/6, 5/6],
+              brace_pattern = [1/3, 2/3])
       bottom_bracket_shelf();
 
     // Biarc curve cutout to better expose lower front
@@ -74,7 +79,7 @@ module bottom_bracket() {
                     mount_height - mount_height_front + e],
                    (mount_height - mount_height_front) / 2,
                    vertical_offset = 0,
-                   horizontal_offset = rear_bevel_height + (2 * thickness));
+                   horizontal_offset = (shell_depth / 3) + (2 * thickness));
   }
 }
 
