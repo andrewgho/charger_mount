@@ -2,7 +2,7 @@
 // Andrew Ho (andrew@zeuscat.com)
 
 // Hull thickness of completed components
-thickness = 1;
+thickness = 1.75;
 thickness2 = 2 * thickness;
 
 // Outer dimensions of charger shell (all dimensions in mm)
